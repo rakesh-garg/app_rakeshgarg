@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nagp-devops-assign-1", "nagp-devops-us\nagp-devops-us.csproj", "{D57DCFCE-EB13-449D-B01E-4C20A743A734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nagp-devops-us", "nagp-devops-us\nagp-devops-us.csproj", "{D57DCFCE-EB13-449D-B01E-4C20A743A734}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test-project", "test-project\test-project.csproj", "{04BDBB02-E0C2-431E-91F9-E9D85DF474B5}"
 EndProject
