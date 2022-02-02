@@ -1,4 +1,17 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
-COPY bin/Release/netcoreapp3.1/publish/ App/
-WORKDIR /App
+# https://hub.docker.com/_/microsoft-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+WORKDIR /source
+
+# copy csproj and restore as distinct layers
+COPY *.sln .
+COPY nagp-devops-us/*.csproj ./nagp-devops-us/
+COPY test-project/*.csproj ./test-project/
+RUN dotnet restore
+
+COPY . .
+RUN dotnet publish -c release -o /app --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:3.1
+WORKDIR /app
+COPY --from=build /app .
 ENTRYPOINT ["dotnet", "nagp-devops-us.dll"]
