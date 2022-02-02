@@ -9,8 +9,7 @@ pipeline {
         stage('Restore packages') {
           steps {
             cleanWs()
-            git credentialsId: 'GITHUBTOKEN', url: 'https://github.com/rakesh-garg/app_rakeshgarg.git'
-            bat "dotnet restore ${workspace}\\nagp-devops-us.sln"
+            checkout([$class: 'GitSCM', branches: [[name: '*/developer']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUBTOKEN', url: 'https://github.com/rakesh-garg/app_rakeshgarg.git']]])
           }
         }
         stage('Start sonarQube analysis'){
@@ -23,6 +22,7 @@ pipeline {
         }
         stage('Code build') {
           steps {
+              bat "dotnet restore ${workspace}\\nagp-devops-us.sln"
               bat "dotnet clean ${workspace}\\nagp-devops-us.sln"
               bat "dotnet build ${workspace}\\nagp-devops-us.sln --configuration Release"
           }
