@@ -48,7 +48,7 @@ pipeline {
         
         stage ("Release artifact") {
             when {
-                branch "develop"
+                branch "developer"
             }
 
             steps {
