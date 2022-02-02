@@ -1,41 +1,43 @@
 pipeline {
     agent any
+    
+     environment {
+        scannerHome = tool name: 'sonar_scanner_dotnet'
+    }
 
     stages {
-        stage ('Clean workspace') {
-          steps {
-            cleanWs()
-          }
-        }
-        stage('Git Checkout'){
-            steps {
-                git credentialsId: 'GITHUBTOKEN', url: 'https://github.com/rakesh-garg/app_rakeshgarg.git'
-            }
-        }
         stage('Restore packages') {
           steps {
+            cleanWs()
+            git credentialsId: 'GITHUBTOKEN', url: 'https://github.com/rakesh-garg/app_rakeshgarg.git'
             bat "dotnet restore ${workspace}\\nagp-devops-us.sln"
           }
         }
-        stage('Clean') {
+        stage('Start sonarQube analysis'){
+            steps{
+                echo "Start SonarQube Analysis"
+                withSonarQubeEnv("Test_Sonar") {
+                  bat "dotnet sonarscanner begin /k:Sonar-RakeshGarg -d:sonar.cs.opencover.reportsPaths=test-project/coverage.opencover.xml -d:sonar.cs.xunit.reportsPaths='test-projects/TestProjectTestOutput.xml'"   
+                }
+            }
+        }
+        stage('Code build') {
           steps {
               bat "dotnet clean ${workspace}\\nagp-devops-us.sln"
-          }
-        }
-        stage('Build') {
-          steps {
               bat "dotnet build ${workspace}\\nagp-devops-us.sln --configuration Release"
           }
         }
-        stage('Unit test') {
+        stage('Test case execusion') {
           steps {
-              bat "dotnet test test-project\\test-project.csproj -l:trx;LogFileName=TestProjectTestOutput.xml"
+            bat "dotnet test ${workspace}\\test-project\\test-project.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover -l:trx;LogFileName=TestProjectTestOutput.xml"
           }
         }
-        stage('Publish'){
-          steps{
-                bat "dotnet publish test-project\\test-project.csproj"
-          }
+        stage('Stop SonarQube Analysis') {
+           steps {
+            withSonarQubeEnv("Test_Sonar") { 
+                bat "dotnet sonarscanner end"
+            }
+           }
         }
     }
 }
