@@ -49,7 +49,6 @@ pipeline {
         }
         
         stage ("Release artifact") {
-            when { branch "developer" }
             steps {
                 echo "Release artifact - dotnet publish -c Release -o ${applicationName}/app/${userName}"
                 bat "dotnet publish -c Release -o ${applicationName}/app/${userName}"
@@ -58,11 +57,6 @@ pipeline {
         
         stage ("Docker build image") {
             steps {
-                script {
-                    if (BRANCH_NAME == "master") {
-                        bat "dotnet publish -c Release -o ${applicationName}/app/${userName}"
-                    }
-                }
                 echo "Docker build image - docker build -t i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} --no-cache -f Dockerfile ."
                 bat "docker build -t i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} --no-cache -f Dockerfile ."
             }
