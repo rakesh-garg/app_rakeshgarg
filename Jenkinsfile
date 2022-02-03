@@ -69,10 +69,12 @@ pipeline {
         }
         stage ("Docker push image") {
             steps {
-                 bat "docker tag i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-${BUILD_NUMBER}"
-                 bat "docker tag i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-latest"
-                 bat "docker push ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-${BUILD_NUMBER}"
-                 bat "docker push ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-latest"
+                withDockerRegistry([ credentialsId: "dockerhub-RakeshGarg-Token", url: "" ]) {
+                     bat "docker tag i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-${BUILD_NUMBER}"
+                     bat "docker tag i-${userName}-${BRANCH_NAME}:${BUILD_NUMBER} ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-latest"
+                     bat "docker push ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-${BUILD_NUMBER}"
+                     bat "docker push ${dockerHubRepository}:i-${userName}-${BRANCH_NAME}-latest"
+                }
             }
         }
         
